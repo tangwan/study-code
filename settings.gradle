@@ -1,2 +1,9 @@
 rootProject.name = 'study-code'
+include 'jdk-api-test'
+include 'lombok-test'
+include 'taobao-tfs-test'
+include 'guava-test'
+include 'mongodb-test'
+include 'rabbit-test'
+include 'redis-test'
 
