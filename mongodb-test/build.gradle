@@ -1,14 +1,7 @@
-group 'com.tangwan'
-version '1.0-SNAPSHOT'
+project(':mongodb-test') {
+    bootRepackage.enabled = false
 
-apply plugin: 'java'
+    dependencies {
 
-sourceCompatibility = 1.5
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    }
 }
