@@ -1,14 +1,20 @@
-group 'com.tangwan'
-version '1.0-SNAPSHOT'
+project(':guava-test') {
+    bootRepackage.enabled = false
 
-apply plugin: 'java'
+    dependencies {
+        compile group: 'com.google.guava', name: 'guava', version: '19.0'
+    }
 
-sourceCompatibility = 1.5
+    configurations {
+        deployerJars
+    }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+    uploadArchives {
+        repositories.mavenDeployer {
+            configuration = configurations.deployerJars
+            repository(url: "http://localhost:8081/nexus/content/repositories/snapshots/") {
+                authentication(userName: "admin", password: "admin123")
+            }
+        }
+    }
 }

@@ -1,6 +1,5 @@
 buildscript {
     ext {
-        //定义spring boot版本号
         springBootVersion = '1.4.0.RELEASE'
     }
     repositories {
@@ -26,9 +25,9 @@ subprojects {
     }
 
     apply plugin: 'java'
-    apply plugin: 'eclipse'
+    apply plugin: 'spring-boot'
     apply plugin: 'idea'
-    apply plugin: 'jacoco'
+    apply plugin: 'maven'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -44,6 +43,15 @@ subprojects {
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:Brixton.RELEASE"
+        }
+    }
+    bootRun {
+        systemProperties = System.properties
     }
 }
 
