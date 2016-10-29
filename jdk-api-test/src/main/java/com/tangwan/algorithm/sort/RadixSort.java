@@ -1,21 +1,18 @@
 package com.tangwan.algorithm.sort;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class 基数排序 {
-	public static void main(String[] args) {
-		int[] a = { 49, 38, 65, 97, 176, 213, 227, 49, 78, 34, 12, 164, 11, 18, 1 };
-		System.out.println("排序之前："+Arrays.toString(a));
-		
-		// 基数排序
-		sort(a);
-		
-		System.out.println("排序之后："+Arrays.toString(a));
-	}
-
-	private static void sort(int[] array) {
+/**
+ * 基数排序
+ * @FileName RadixSort.java
+ * @Date 2016/10/29 20:38
+ * @author Name:tangwan  Mail:devintowne.tang@boldseas.com
+ * @since JDK 1.8
+ * @version V1.0
+ */
+public class RadixSort {
+	public static void sort(int[] array) {
 		// 找到最大数，确定要排序几趟
 		int max = 0;
 		for (int i = 0; i < array.length; i++) {

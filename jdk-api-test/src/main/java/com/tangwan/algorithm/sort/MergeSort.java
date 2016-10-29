@@ -2,18 +2,20 @@ package com.tangwan.algorithm.sort;
 
 import java.util.Arrays;
 
-public class 归并排序 {
+/**
+ * 归并排序
+ * @FileName MergeSort.java
+ * @Date 2016/10/29 20:40
+ * @author Name:tangwan  Mail:devintowne.tang@boldseas.com
+ * @since JDK 1.8
+ * @version V1.0
+ */
+public class MergeSort {
 	public static void main(String[] args) {
-		int[] a = { 49, 38, 65, 97, 76, 13, 27, 49, 78, 34, 12, 64, 1, 8 };
-		System.out.println("排序之前："+Arrays.toString(a));
-		
-		// 归并排序
-		mergeSort(a, 0, a.length - 1);
-		
-		System.out.println("排序之后："+Arrays.toString(a));
+
 	}
 
-	private static void mergeSort(int[] a, int left, int right) {
+	public static void mergeSort(int[] a, int left, int right) {
 		if (left < right) {
 			int middle = (left + right) / 2;
 			// 对左边进行递归
@@ -25,7 +27,7 @@ public class 归并排序 {
 		}
 	}
 
-	private static void merge(int[] a, int left, int middle, int right) {
+	public static void merge(int[] a, int left, int middle, int right) {
 		int[] tmpArr = new int[a.length];
 		int mid = middle + 1; // 右边的起始位置
 		int tmp = left;

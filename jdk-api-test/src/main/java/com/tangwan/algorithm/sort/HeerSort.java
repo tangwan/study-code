@@ -2,15 +2,22 @@ package com.tangwan.algorithm.sort;
 
 import java.util.Arrays;
 
-public class 希尔排序 {
-	public static void main(String[] args) {
-		int[] a = { 49, 38, 65, 97, 76, 13, 27, 49, 78, 34, 12, 64, 1 };
+/**
+ * 希尔排序
+ * @FileName HeerSort.java
+ * @Date 2016/10/29 20:39
+ * @author Name:tangwan  Mail:devintowne.tang@boldseas.com
+ * @since JDK 1.8
+ * @version V1.0
+ */
+public class HeerSort {
+	public static void sort(int[] a) {
 		System.out.println("排序之前："+Arrays.toString(a));
 		/*for (int i = 0; i < a.length; i++) {
 			System.out.print(a[i] + " ");
 		}*/
 		
-		// 希尔排序
+		// HeerSort
 		int d = a.length;
 		while (true) {
 			d = d / 2;

@@ -5,7 +5,6 @@ import org.junit.Test;
 /**
  * 进制转换,10进制Long到任意进制
  * @FileName:RadixConvert.java
- * @Description: TODO()
  * @Author: tangwan
  * @Date: 2016年5月27日 上午10:46:53
  * @since: JDK 1.8

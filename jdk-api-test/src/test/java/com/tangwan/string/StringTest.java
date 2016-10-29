@@ -6,7 +6,6 @@ import org.junit.Test;
 /**
  * 测试String类不常见和没用过的API
  * @FileName:StringTest.java
- * @Description: TODO()  
  * @Author: tangwan
  * @Date: 2016年6月19日 下午8:47:40
  * @since:  JDK 1.8

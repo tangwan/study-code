@@ -1,25 +1,21 @@
 package com.tangwan.algorithm.sort;
 
-import java.util.Arrays;
-
-public class 快速排序 {
-	public static void main(String[] args) {
-		int[] a = { 49, 38, 65, 97, 76, 13, 27, 49, 78, 34, 12, 64, 1, 8 };
-		System.out.println("排序之前："+Arrays.toString(a));
-		
-		// 快速排序
-		quick(a);
-		
-		System.out.println("排序之后："+Arrays.toString(a));
-	}
-
-	private static void quick(int[] a) {
+/**
+ * 快速排序
+ * @FileName QuickSort.java
+ * @Date 2016/10/29 20:41
+ * @author Name:tangwan  Mail:devintowne.tang@boldseas.com
+ * @since JDK 1.8
+ * @version V1.0
+ */
+public class QuickSort {
+	public static void quick(int[] a) {
 		if (a.length > 0) {
 			quickSort(a, 0, a.length - 1);
 		}
 	}
 
-	private static void quickSort(int[] a, int low, int high) {
+	public static void quickSort(int[] a, int low, int high) {
 		if (low < high) { // 如果不加这个判断递归会无法退出导致堆栈溢出异常
 			int middle = getMiddle(a, low, high);
 			quickSort(a, 0, middle - 1);
@@ -27,7 +23,7 @@ public class 快速排序 {
 		}
 	}
 
-	private static int getMiddle(int[] a, int low, int high) {
+	public static int getMiddle(int[] a, int low, int high) {
 		int temp = a[low];// 基准元素
 		while (low < high) {
 			// 找到比基准元素小的元素位置

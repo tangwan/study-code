@@ -55,16 +55,4 @@ public class DataObject {
 			return false;
 		return true;
 	}
-	
-	public static void main(String[] args) {
-		DataObject d1 = new DataObject("tangwan","tangwan");
-		System.out.println(d1);
-		DataObject d2 = new DataObject("tangwan","tangwan");
-		System.out.println(d2);
-		
-		System.out.println(d1.equals(d2));
-		
-		String abc = "abc";
-		System.out.println(abc.hashCode());
-	}
 }

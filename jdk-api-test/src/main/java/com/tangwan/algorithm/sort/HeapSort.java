@@ -1,22 +1,14 @@
 package com.tangwan.algorithm.sort;
 
-import java.util.Arrays;
-
-public class 堆排序 {
-	public static void main(String[] args) {
-		int[] a = { 49, 38, 65, 97, 76, 13, 27, 49, 78, 34, 12, 64 };
-		System.out.println("排序之前："+Arrays.toString(a));
-		int arrayLength = a.length;
-		// 循环建堆
-		for (int i = 0; i < arrayLength - 1; i++) {
-			// 建堆
-			buildMaxHeap(a, arrayLength - 1 - i);
-			// 交换堆顶和最后一个元素
-			swap(a, 0, arrayLength - 1 - i);
-		}
-		System.out.println("排序之后："+Arrays.toString(a));
-	}
-
+/**
+ * 堆排序
+ * @FileName HeapSort.java
+ * @Date 2016/10/29 20:38
+ * @author Name:tangwan  Mail:devintowne.tang@boldseas.com
+ * @since JDK 1.8
+ * @version V1.0
+ */
+public class HeapSort {
 	// 对data数组从0到lastIndex建大顶堆
 	public static void buildMaxHeap(int[] data, int lastIndex) {
 		// 从lastIndex处节点（最后一个节点）的父节点开始
@@ -49,7 +41,7 @@ public class 堆排序 {
 	}
 
 	// 交换
-	private static void swap(int[] data, int i, int j) {
+	public static void swap(int[] data, int i, int j) {
 		int tmp = data[i];
 		data[i] = data[j];
 		data[j] = tmp;

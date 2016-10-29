@@ -7,7 +7,6 @@ import java.io.File;
 /**
  * 测试获取工程路径和文件的磁盘绝对路径
  * @FileName:TestGetPath.java
- * @Description: TODO()  
  * @Author: tangwan
  * @Date: 2016年5月27日 上午10:47:04
  * @since:  JDK 1.8
