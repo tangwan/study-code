@@ -1,0 +1,19 @@
+http://172.29.1.101:81/v1/tfs/T1nRJTByJT1RCvBVdK		(菊花)
+http://172.29.1.101:81/v1/tfs/T1eRJTByJT1RCvBVdK		(红帽)
+http://172.29.1.101:81/v1/tfs/T1eaJTByJT1RCvBVdK		(陈乔恩)
+http://172.29.1.101:81/v1/tfs/T1qRJTByJT1RCvBVdK		(歌曲:山丘)
+
+
+jar包和源码自己导入工程:
+
+Maven 坐标:
+<dependency>
+	<groupId>com.taobao.common.tfs</groupId>
+	<artifactId>tfs-javaclient</artifactId>
+	<version>2.1.1</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.mina</groupId>
+	<artifactId>mina-core</artifactId>
+	<version>1.1.7</version>
+</dependency>

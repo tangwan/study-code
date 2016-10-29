@@ -1,0 +1,432 @@
+我已经把源码拖到src下,可以随意Debug
+
+TFS学习参考地址:
+https://github.com/alibaba/tfs/blob/master/INSTALL.md
+https://github.com/alibaba/tfs/blob/master/DEPLOY.md
+http://tfs.taobao.org/
+http://code.taobao.org/p/tfs/wiki/get/
+http://csrd.aliapp.com/
+ 
+TFS软件下载地址(源码):
+TFS:https://github.com/alibaba/tfs
+Nginx模块:https://github.com/alibaba/nginx-tfs
+utils:https://github.com/raywill/tb-common-utils
+
+###########################################################客户端接口列表##########################################################
+int setMasterIP(String ipaddr);			//改变master ip地址，ip地址格式为 ip:port[:tfsarea]
+
+String newTfsFileName(String suffix);	//生成一个新的tfs文件名，如果失败，返回null
+
+boolean fetchFile(String tfsFileName, String tfsSuffix, String localFileName);	//读取一个tfs的文件到本地文件
+
+boolean fetchFile(String tfsFileName, String tfsSuffix, !OutputStream output);	//读取一个tfs的文件到输出流
+
+String saveFile(String localFileName, String tfsFileName, String tfsSuffix);	//保存一个本地文件到TFS，失败返回null
+
+String saveFile(String mainName, String suffix, byte[] data, int offset, int length);	//保存一个字节流data到TFS
+
+String saveFile(byte[] data, String mainName, String suffix);	//保存一个字节流data到TFS
+
+FileInfo statFile(String tfsFileName, String tfsSuffix)	//stat一个tfs文件，成功返回FileInfo， 失败返回nul
+
+boolean unlinkFile(String tfsFileName, String tfsSuffix);	//删除一个文件
+
+boolean hideFile(String fileName, String tfsSuffix, int option);	//临时隐藏/反隐藏一个文件
+
+String saveUniqueFile(String localFileName, String tfsFileName, String tfsSuffix);	//排重保存文件
+
+String saveUniqueFile(String mainName, String suffix, byte[] data, int offset, int length);	//排重保存字节流
+
+int unlinkUniqueFile(String tfsFileName, String tfsSuffix);	//排重删除文件
+
+======================================================写大文件接口======================================================
+String saveLargeFile(String localFileName, String tfsFileName, String tfsSuffix)	//保存一个大文件到tfs，成功返回tfs文件名(L开头），失败返回null
+
+String saveLargeFile(byte[] data, String tfsFileName, String tfsSuffix，String key);	//保存一个字节流data到tfs，成功返回tfs文件名，失败返回null
+
+String saveLargeFile(String mainName, String suffix, byte[] data, int offset, int length, String key);	//保存一个字节流data到tfs，成功返回tfs文件名，失败返回null
+
+======================================================数据多次读写接口======================================================
+int openReadFile(String tfsFileName, String tfsSuffix)	//打开一个tfs文件读，成功返回大于0的fd，失败返回负值
+
+int readFile(int fd, byte[] data, int offset, int length)	//读取不超过length大小的数据到一个字符数组，成功返回读取到的数据长度，失败返回负值。
+
+int readFile(int fd, long fileOffset, byte[] data, int offset, int length)	//从文件的fileoffset开始，读取不超过length大小的数据到一个字符数组，成功返回读取到的数据长度，失败返回负值。
+
+int openWriteFile(String tfsFileName, String tfsSuffix, String key)	//打开一个tfs文件写，成功返回大于0的fd，失败返回负值
+
+int writeFile(int fd, byte[] data, int offset, int length)	//写data到tfs文件，成功返回写入的长度，失败返回负值
+
+String closeFile(int fd)	//关闭tfs文件句柄，释放相关资源。成功返回最后tfs文件名，失败返回null
+
+void destroy();	//销毁占用的资源 (主进程调用一次）
+
+===================================================1.3.1版本新加API加入四个新的接口==============================================================================
+String saveFile(String mainName, String suffix, byte[] data, int offset, int length);
+
+String saveUniqueFile(String mainName, String suffix,  byte[] data, int offset, int length);
+
+int unlinkUniqueFile(String tfsFileName, String tfsSuffix);
+ 
+void destroy();
+
+====================================================2.1.1版本新加API加入以下新的接口============================================================================
+FileInfo statFile(String tfsFileName, String tfsSuffix)
+  
+String saveLargeFile(String localFileName, String tfsFileName, String tfsSuffix) 
+
+String saveLargeFile(String mainName, String suffix, byte[] data, int offset, int length, String key);
+
+int openReadFile(String tfsFileName, String tfsSuffix) 
+
+int readFile(int fd, byte[] data, int offset, int length)
+
+nt readFile(int fd, long fileOffset, byte[] data, int offset, int length) 
+
+int openWriteFile(String tfsFileName, String tfsSuffix, String key)
+ 
+int writeFile(int fd, byte[] data, int offset, int length)
+
+String closeFile(int fd) 
+
+=======================================================文件去重复=================================================================================
+#使用排重接口写时，通过计算数据md5值，保证同一个文件，tfs上只会有一份。
+#排重使用tair存放排重数据，应用需要排重功能时，要使用DefaultTfsManager的setUniqueStore来初始化tair排重。
+
+1.setMasterIP
+函数：int setMasterIP(String ipaddr)
+描述：设置NameServer的ip地址。
+参数：
+ipaddr 需要连接的NameServer的IP。
+示例：
+DefaultTfsManager tfsManager  = new DefaultTfsManager();
+tfsManager.setMasterIP("172.29.1.101:8100");
+
+2.setUniqueStore
+函数：void setUniqueStore(List<String> serverList, String groupName, int namespace) 
+描述：设置排重使用的tair。
+参数：
+	serverList: tair的configserver地址列表。 
+	groupName: tair中的排重组名 
+	namespace： tair中的排重namespace
+示例：
+	TfsManager tfsManager = new DefaultTfsManager();
+	tfsManager.setMasterIP("192.168.208.21:3100");
+	List<String> serverList = new ArrayList<String>();
+	serverList.add("127.0.0.1:5198");
+	serverList.add("127.0.0.2:5198");
+	tfsManager.setUniqStore(serverList, "group_tfsunique", 102);
+
+3.newTfsFileName
+函数：String newTfsFileName(String suffix); 
+描述：根据后缀名suffix获取tfs文件名，为保持与老版本兼容而保留的接口，可通过savefile函数直接获取，不推荐使用。
+参数：
+suffix 任意字符串，建议设为NULL。
+返回：新的文件名
+示例：
+	DefaultTfsManager tfsManager  = new DefaultTfsManager();
+	String newTfsName = tfsManager.newTfsFileName(NULL);
+
+4.fetchFile
+函数：boolean fetchFile(String tfsFileName, String tfsSuffix, String localFileName);
+	boolean fetchFile(String tfsFileName, String tfsSuffix, !OutputStream output);
+描述：从tfs上取一个文件存到本地，前一个函数将数据存到本地文件，后一个函数将数据存到输出流中。
+参数：
+	tfsFileName 需要读取的tfs文件名。
+	tfsSuffix 需要读取的文件名后缀，需要和存入时后缀相同。
+	localFileName 本地文件名。
+	Output 数据流。
+返回：读操作成功返回true，读操作失败返回false。
+示例：
+	String tmpfile = "tmp";
+	String tfsname = T16FXXXd4aXXaZaWbX ;
+	boolean ret = tfsManager.fetchFile(tfsname, null, tmpfile);
+	ByteArrayOutputStream output = new ByteArrayOutputStream();
+	String tfsname = T16FXXXd4aXXaZaWbX ;
+	boolean ret = tfsManager.fetchFile(tfsname, null, output);
+
+5.saveFile
+函数：String saveFile(String localFileName, String tfsFileName, String tfsSuffix); 
+String saveFile(String mainName, String suffix, byte[] data, int offset, int length); 
+描述：将本地文件或数据存到TFS上，前一个函数将本地文件存入TFS上，后一个函数将本地byte数组存到TFS上。
+参数：
+	localFileName 本地文件名。
+	tfsFileName 给文件指定一个TFS文件名，通常建议设为NULL。
+	tfsSuffix 任意字符串，可设为NULL。
+	mainName 与前一个函数的参数tfsFileName相同，给文件指定一个TFS文件名，通常建议设为NULL。
+	suffix 与前一个函数的参数tfsSuffix相同，任意字符串，可设为NULL。
+	data 要写入的byte数组。
+	offset 要写入的数据在data中的位置。
+	length 要写入的数据长度。
+返回：TFS文件名。
+示例：
+	String localfile = "test.jpg";
+	String tfsname = tfsManager.saveFile(localfile, null, ".jpg ");
+	String data_string = "this is a test.";
+	String tfsname = tfsManager.saveFile(data_string.getBytes(), null, null);
+
+6.saveUniqueFile
+函数：String saveUniqueFile(String localFileName, String tfsFileName, String tfsSuffix); 
+	String saveUniqueFile(String mainName, String suffix, byte[] data, int offset, int length); 
+描述：将本地文件或数据排重存到TFS上，前一个函数将本地文件存入TFS上，后一个函数将本地byte数组存到TFS上。
+参数：
+	localFileName 本地文件名。
+	tfsFileName 给文件指定一个TFS文件名，通常建议设为NULL。
+	tfsSuffix 任意字符串，可设为NULL。
+	mainName 与前一个函数的参数tfsFileName相同，给文件指定一个TFS文件名，通常建议设为NULL。
+	suffix 与前一个函数的参数tfsSuffix相同，任意字符串，可设为NULL。
+	data 要写入的byte数组。
+	offset 要写入的数据在data中的位置。
+	length 要写入的数据长度。
+返回：TFS文件名。
+示例：
+	String localfile = "test.jpg";
+	String tfsname = tfsManager.saveUniqueFile(localfile, null, ".jpg ");
+	String data_string = "this is a test.";
+	String tfsname = tfsManager.saveUniqueFile(data_string.getBytes(), null, null);
+
+7.unlinkFile
+函数：boolean unlinkFile(String tfsFileName, String tfsSuffix) 
+描述：在tfs上删除一个文件。
+参数：
+	tfsFileName 需要读取的tfs文件名。
+	tfsSuffix 需要读取的文件名后缀，需要和存入时后缀相同。
+返回：删除成功返回true，删除失败返回false。
+示例：
+	String tfsname = T16FXXXd4aXXaZaWbX ;
+	String suffix = ".jpg";
+	boolean ret = tfsManager.unlinkFile(tfsname, suffix);
+	unlinkUniqueFile
+函数：boolean unlinkUniqueFile(String tfsFileName, String tfsSuffix) 
+描述：在tfs上排重删除一个文件，直到引用计数为0时才真正删除tfs数据
+参数：
+	tfsFileName 需要读取的tfs文件名。
+	tfsSuffix 需要读取的文件名后缀，需要和存入时后缀相同。
+返回：删除成功返回当前文件的refer count，删除失败返回-1。
+示例：
+	String tfsname = T16FXXXd4aXXaZaWbX ;
+	String suffix = ".jpg";
+	int ret = tfsManager.unlinkUniqueFile(tfsname, suffix);
+
+8.hideFile
+函数：boolean hideFile(String fileName, String tfsSuffix, int option); 
+描述：临时隐藏/反隐藏一个文件。
+参数：
+	tfsFileName 需要读取的tfs文件名。
+	tfsSuffix 需要读取的文件名后缀，需要和存入时后缀相同。
+	option 标识隐藏还是反隐藏，该值为1时表示隐藏，该值为0时表示反隐藏。
+返回：操作成功返回true，操作失败返回false。
+
+9.statFile
+函数：FileInfo statFile(String tfsFileName, String tfsSuffix) 
+描述：stat一个tfs文件。
+参数：
+	tfsFileName 需要读取的tfs文件名。
+	tfsSuffix 需要读取的文件名后缀，需要和存入时后缀相同。
+返回：操作成功返回FileInfo，操作失败返回null。
+	 FileInfo fileInfo = tfsManager.statFile(name, null); [[BR]]
+	 System.out.println("file status " + fileInfo.getFlag());  // 文件的状态有0（正常）， 1（删除）， 4（隐藏）。[[BR]]
+
+10.destroy
+函数： void destroy（） 
+描述： 销毁资源，该接口程序中请只掉用一次。 
+参数： 空 
+返回： 空 
+
+==================================================常用API代码===============================================================
+初始化java客户端
+#配置文件;tfs.xml
+#####################################################配置文件################################################################
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+	<beans>
+	    <bean id="tfsManager" class="com.taobao.common.tfs.impl.DefaultTfsManager" init-method="init" >
+	      <!-- 整个进程中系统最多等待多少个请求,取决于你有多少个线程并发的请求TFS -->
+	       <property name="maxWaitThread">
+	        <value>100</value>
+	      </property>
+	      <!-- 单个请求最大的等待时间(ms) 超过这个时间放弃这次请求-->
+	      <property name="timeout">
+	        <value>2000</value>
+	      </property>
+	      <!-- Tfs master nameserver ip address -->
+	      <property name="nsip">
+	        <value>ip:port</value>
+	      </property>
+	      <!-- TFS 集群的编号,这个编号只是一种参考,系统初始化的时候会从ns上取,取不到才用本地设置的.!-->
+	      <property name="tfsClusterIndex">
+	        <value>1</value>
+	      </property>
+	      <!-- TFS在读取文件的时候会缓存block所在的数据服务器ip,这个参数配置了最多缓存的记录个数!-->
+	      <property name="maxCacheItemCount">
+	        <value>10000</value>
+	      </property>
+	      <!-- 上一项缓存最大有效的时间(ms)!-->
+	      <property name="maxCacheTime">
+	        <value>5000</value>
+	      </property>
+	       <!-- 不需要排重功能时，下面配置项可以不设置 -->
+	       <!-- tair排重数据库的serverlist -->
+	      <property name="uniqueServerList">
+	      	<list>
+	      	  <value>127.0.0.1:5198</value>
+	      	  <value>127.0.0.2:5198</value>
+	      	</list>
+	      </property>
+	       <!-- tair排重数据库的groupName -->
+	      <property name="groupName">
+	      	<value>group_tfsunique</value>
+	      </property>
+	       <!-- tair排重数据库的namespace -->
+	      <property name="namespace">
+	      	<value>102</value>
+	      </property>
+	   </bean>
+	</beans>
+
+######################################################初始化代码,加载配置文件########################################################
+ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] { "tfs.xml" }); 
+TfsManager tfsManager = (DefaultTfsManager) appContext.getBean("tfsManager");
+
+######################################################写文件;可使用两个接口：#########################################################
+String saveFile(String localFileName, String tfsFileName, String tfsSuffix); 
+String saveFile(String mainName, String suffix, byte[] data, int offset, int length);
+ 
+#以第一个接口为例，使用方法如下：
+	ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] { "tfs.xml" }); 
+	TfsManager tfsManager = (DefaultTfsManager) appContext.getBean("tfsManager");
+	String localfile = "test.jpg";
+	
+	//不传入suffix和tfsname
+	void save_file_without_param ()
+	{
+		String tfsname = tfsManager.saveFile(localfile, null, null);
+		System.out.println("save with no parameters " + tfsname);
+	}
+	//只传入suffix
+	save_file_with_suffix()
+	{
+		String tfsname = tfsManager.saveFile(localfile, null, ".jpg");
+		System.out.println("save with suffix " + tfsname);
+	}
+	//只传入tfsname
+	void save_file_with_tfsname()
+	{
+		String newtfsname = tfsManager.newTfsFileName(".jpg ");
+		String tfsname = tfsManager.saveFile(localfile, newtfsname, null);
+		System.out.println("save with tfsname " + tfsname);
+	 }
+	//同时传入suffix和tfsname
+	void save_file_with_tfsname_suffix()
+		{
+			String newtfsname = tfsManager.newTfsFileName(".jpg ");
+			String tfsname = tfsManager.saveFile(localfile, newtfsname, ".jpg");
+			System.out.println("save with tfsname and suffix " + tfsname);
+		 }
+	}
+#以上采用了四种方法向TFS写入文件，但是不建议用第3种和第4种，因为这两种方式要与nameserver多一次交互，损失了效率。第二个函数的使用方法和第一个函数类似，不再赘述。
+
+
+########################################################读文件#############################################################
+#可使用两个接口：
+	boolean fetchFile(String tfsFileName, String tfsSuffix, String localFileName); 
+	boolean fetchFile(String tfsFileName, String tfsSuffix, !OutputStream output); 
+	
+	//以第一个接口为例，使用方法如下：
+	ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] { "tfs.xml" }); 
+	TfsManager tfsManager = (DefaultTfsManager) appContext.getBean("tfsManager");
+	String localfile = "test.jpg";
+	String tmpfile = "tmp";
+
+	//不带后缀名
+	void fetch _file_without_param ()
+	{
+		String tfsname = tfsManager.saveFile(localfile, null, null);
+		System.out.println("fetch with no parameters " + tfsname);
+		tfsManager.fetchFile(tfsname, null, tmpfile);
+	}
+	//带后缀名
+	void fetch_file_with_suffix()
+	{
+		String tfsname = tfsManager.saveFile(localfile, null, ".jpg");
+		System.out.println("save with suffix " + tfsname);
+		tfsManager.fetchFile(tfsname, ".jpg", tmpfile);
+	}
+	//newtfsfilename后取文件名的方法，后缀要使用saveFile的后缀
+	void fetch _file_with_tfsname()
+	{
+		String newtfsname = tfsManager.newTfsFileName(".jpg ");
+		String tfsname = tfsManager.saveFile(localfile, newtfsname, null);
+		System.out.println("save with tfsname " + tfsname);
+		tfsManager.fetchFile(tfsname, null, tmpfile);
+	}
+	//用返回的tfsname和直接newtfsname得到的文件名两种方式取文件
+	void fetch _file_with_tfsname_suffix()
+	{
+		String newtfsname = tfsManager.newTfsFileName(".jpg ");
+		String tfsname = tfsManager.saveFile(localfile, newtfsname, ".jpg");
+		System.out.println("save with tfsname and suffix " + tfsname);
+		String tmpfile1 = "tmp1";
+		tfsManager.fetchFile(tfsname, NULL, tmpfile1);
+		String tmpfile2 = "tmp2";
+		tfsManager.fetchFile(newtfsname, ".jpg", tmpfile2);
+	}
+以上代码针对四种写文件的方式分别读取文件，在读文件时需注意两点：
+1．建议Fetchfile传入的tfsname以存入文件时返回的文件名为准，如果用newTfsFileName()的返回值来作为文件名，必须添加saveFile时候传入的后缀。
+2．后缀必须和存文件时输入的后缀一致，如果传入为null，那么fetchfile时suffix也应该会null，传入错误的后缀将无法找到正确的文件。
+
+
+
+#########################################################删除文件##################################################################
+#使用方法如下：
+	ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] { "tfs.xml" }); 
+	TfsManager tfsManager = (DefaultTfsManager) appContext.getBean("tfsManager");
+	String localfile = "test.jpg";
+	String tfsname = tfsManager.saveFile(localfile, null, null);
+	tfsManager.unlinkFile(tfsname, null);
+#以上代码时对删除文件的简单应用，其注意要点和读文件类似，不再赘述。
+
+
+
+#########################################################隐藏文件##################################################################
+#使用方法如下：
+	ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext(new String[] { "tfs.xml" }); 
+	TfsManager tfsManager = (DefaultTfsManager) appContext.getBean("tfsManager");
+	String localfile = "test.jpg";
+	String tfsname = tfsManager.saveFile(localfile, null, null);
+	tfsManager.hideFile(tfsname, null, 0);
+	tfsManager.hideFile(tfsname, null, 1);
+以上代码时对隐藏文件和反隐藏文件的简单应用，其注意要点和读文件类似，不再赘述。
+
+
+##########################################################写大文件##################################################################
+#tfs文件写大文件，为了断点续传，必须传入一个key参数，来标识此次大文件的写。一次写失败后，再次传入相同的key写，tfsclient会根据key找到前一次已经写完成的部分重用。 
+#为了确保key的唯一性，当前tfsclient接受的key必须是本地文件系统上存在的一个文件路径,该key文件的内容无所谓. key的唯一性请调用者自己负责。
+1）一次写入。大文件现在不支持更新。所以文件名请传入null.
+	//不需要传入key，默认使用localFileName作为key。
+	String tfsName = saveLargeFile(localFileName, null, null);
+	String tfsName = saveLargeFile("test write".getBytes(), null, null, keyName);
+
+2）多次写入。 
+	int fd = openWriteFile(null, ".dat", keyName);
+	byte[] data = "write data";
+	writeFile(fd, data, data.length);
+	writeFile(fd, data, data.length);
+	//close file， 获得最后tfs文件名。即使写失败，也必须掉用close
+	String name = closeFile(fd);
+	
+##########################################################读大文件##########################################################
+1）一次读取直接使用fetchFile接口即可，会根据文件名判断是大文件。
+
+2）多次读取
+	int fd = openReadFile("L16FXXXd4aXXaZaWbX", null);
+	byte[] data = new byte[1024000];
+	readFile(fd, data, data.length);
+	closeFile(fd);
+	 
+对于上述方式保存的TFS文件，同样的，可以用TFS返回的tfsName来访问，小文件以T开头，大文件以L开头。
+假设saveFile返回的文件名是T16FXXXd4aXXaZaWbX，而newTfsFileName返回的文件名是T16FXXXdXXXXXXXXXX，传入的suffix是any_suffix_you_want。
+T16FXXXd4aXXaZaWbX 
+T16FXXXd4aXXaZaWbX.any_suffix_you_want 
+T16FXXXdXXXXXXXXXX.any_suffix_you_want 
+这三种文件名形式都是合法的。

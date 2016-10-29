@@ -2,6 +2,8 @@ project(':taobao-tfs-test') {
     bootRepackage.enabled = false
 
     dependencies {
+        //依赖本地某个目录下所有jar,其实这个包中央仓库有
+         compile fileTree(dir: 'libs', include: '*.jar')
 
     }
 }
