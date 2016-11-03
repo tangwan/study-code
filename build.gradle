@@ -3,10 +3,10 @@ buildscript {
         springBootVersion = '1.4.0.RELEASE'
     }
     repositories {
-        mavenCentral()
         maven {
             url "http://127.0.0.1:8081/nexus/content/groups/public"
         }
+        mavenCentral()
         jcenter()
     }
     dependencies {
@@ -16,10 +16,10 @@ buildscript {
 
 subprojects {
     repositories {
-        mavenCentral()
         maven {
             url "http://127.0.0.1:8081/nexus/content/groups/public"
         }
+        mavenCentral()
         jcenter()
         mavenLocal()
     }
