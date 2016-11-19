@@ -1,10 +1,10 @@
-package com.tangwan.algorithm.sort;
+package com.tangwan.sortAlgorithm;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static com.tangwan.algorithm.sort.MergeSort.mergeSort;
+import static com.tangwan.sortAlgorithm.MergeSort.mergeSort;
 
 /**
  * 归并排序

@@ -6,4 +6,5 @@ include 'guava-test'
 include 'mongodb-test'
 include 'rabbit-test'
 include 'redis-test'
+include 'apache-commons-test'
 

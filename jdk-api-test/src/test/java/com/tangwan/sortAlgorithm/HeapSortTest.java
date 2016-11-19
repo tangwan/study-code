@@ -1,10 +1,10 @@
-package com.tangwan.algorithm.sort;
+package com.tangwan.sortAlgorithm;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static com.tangwan.algorithm.sort.HeapSort.buildMaxHeap;
+import static com.tangwan.sortAlgorithm.HeapSort.buildMaxHeap;
 
 /**
  * @author Name:tangwan  Mail:lovej2ee@126.com

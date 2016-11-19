@@ -1,4 +1,4 @@
-package com.tangwan.algorithm.sort;
+package com.tangwan.sortAlgorithm;
 
 /**
  * 二分查找

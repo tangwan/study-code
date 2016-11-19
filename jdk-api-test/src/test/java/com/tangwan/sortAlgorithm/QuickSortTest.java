@@ -1,10 +1,10 @@
-package com.tangwan.algorithm.sort;
+package com.tangwan.sortAlgorithm;
 
 import org.junit.Test;
 
 import java.util.Arrays;
 
-import static com.tangwan.algorithm.sort.QuickSort.quick;
+import static com.tangwan.sortAlgorithm.QuickSort.quick;
 
 /**
  * 快速排序测试

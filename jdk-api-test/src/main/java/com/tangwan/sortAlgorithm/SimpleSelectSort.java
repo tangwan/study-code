@@ -1,4 +1,4 @@
-package com.tangwan.algorithm.sort;
+package com.tangwan.sortAlgorithm;
 
 import java.util.Arrays;
 

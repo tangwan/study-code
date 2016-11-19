@@ -1,4 +1,4 @@
-package com.tangwan.algorithm.sort;
+package com.tangwan.sortAlgorithm;
 
 /**
  * 快速排序

@@ -1,0 +1,9 @@
+project(':apache-commons-test') {
+    bootRepackage.enabled = false
+    jar.enabled = false
+    bootRepackage.withJarTask = jar
+
+    dependencies {
+
+    }
+}
