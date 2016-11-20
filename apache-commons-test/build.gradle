@@ -4,6 +4,6 @@ project(':apache-commons-test') {
     bootRepackage.withJarTask = jar
 
     dependencies {
-
+        compile group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
     }
 }
